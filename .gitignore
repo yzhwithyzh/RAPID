@@ -1,0 +1,6 @@
+LLMServer/
+ADMIN/node_modules/
+ADMIN/dist/
+fronted/node_modules/
+fronted/dist/
+SERVER/node_modules/

@@ -26,6 +26,13 @@ DB_USERNAME=root # Database username
 DB_PASSWORD=root # Database password
 ```
 
+Find `SERVER/.env` and modify it to your openai key
+
+```shell
+OPENAI_API_KEY = '********'
+OPENAI_API_MODEL = 'deepseek-chat'
+```
+
 ##### 3. Install dependencies and start the service
 
 ```shell

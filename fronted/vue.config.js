@@ -20,6 +20,10 @@ module.exports = {
         '/v1': {
           target: ' http://localhost:3089',
           changeOrigin: true,
+        },
+        '/com':{
+          target: ' http://localhost:8841',
+          changeOrigin: true,
         }
     }
   },

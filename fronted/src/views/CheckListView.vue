@@ -1,4 +1,8 @@
 <style scoped>
+
+::v-deep .el-progress__text{
+    font-size: 10px!important;
+}
 .demo-1-hero {
     display: grid;
     align-items: center;
@@ -165,7 +169,7 @@ health<span class="title_1">C</span>are guid<span class="title_1">E</span>lines 
                                 <div>
                                     <el-table :data="tableData" style="width: 100%">
                                         <el-table-column prop="filename" label="File Name" ></el-table-column>
-                                        
+                                        <el-table-column prop="promptInfo.name" label="Checklist"></el-table-column>
                                         <el-table-column label="Upload time" >
                                             <template #default="scope">
                                                 <div style="display: flex; ">
@@ -174,11 +178,20 @@ health<span class="title_1">C</span>are guid<span class="title_1">E</span>lines 
                                                 </div>
                                             </template>
                                         </el-table-column>
+                                        <el-table-column label="Update time" >
+                                            <template #default="scope">
+                                                <div style="display: flex; ">
+                                            
+                                                    <span>{{ new Date(scope.row.updatedAt).toLocaleString() }}</span>
+                                                </div>
+                                            </template>
+                                        </el-table-column>
                                         <el-table-column label="Status" >
                                             <template #default="scope">
                                                 <div style="display: flex; ">
+                                                    <el-progress v-if="state.progressData[scope.row.id]" type="circle" width="45" :percentage="state.progressData[scope.row.id]" :stroke-width="6"/>
                                                     
-                                                    <span v-if="scope.row.status === '1'"> Pending processing </span>
+                                                    <span v-else-if="scope.row.status === '1'"> Pending processing </span>
                                                     <span v-else-if="scope.row.status === '2'"> Completed</span>
                                                     <span v-else>Error</span>
                                                 </div>
@@ -225,7 +238,7 @@ health<span class="title_1">C</span>are guid<span class="title_1">E</span>lines 
   import { ref,toRaw,reactive, onMounted, watch, onBeforeUnmount} from 'vue';
   import { useRouter } from 'vue-router';
   import { genFileId ,ElMessage,ElLoading} from 'element-plus';
-  import type { UploadFile, UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
+  import type { UploadFile, UploadInstance, UploadProps, UploadRawFile,ElProgress} from 'element-plus';
   import { checkListGetall, getProgress} from "../api/modules/api.checklist";
   import {listAll,createOne,downloadExcel,getSysList} from "../api/modules/api.upload";
   const promptsValue = ref('')
@@ -266,7 +279,16 @@ health<span class="title_1">C</span>are guid<span class="title_1">E</span>lines 
         ElMessage.error('获取数据失败');
         }
     };
+    const get_progress = ()=>{
+        getProgress().then(res => {
+            if(JSON.stringify(state.progressData)!==JSON.stringify(res.data)){
+                fetchData(currentPage.value);
+            }
+            state.progressData = res.data
+        })
+    };
   const state = reactive({
+      progressData:{},
       show: {
         add: false,
         edit: false,
@@ -419,7 +441,7 @@ health<span class="title_1">C</span>are guid<span class="title_1">E</span>lines 
             fetchData(currentPage.value);
         }, 1000*60); // 每 60 秒刷新一次
         timer2 = setInterval(() => {
-            getProgress();
+            get_progress()
         }, 1000*10); // 每 10 秒刷新一次
     };
 
